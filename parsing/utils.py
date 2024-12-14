@@ -66,11 +66,8 @@ def get_beast_description(name):
 
     description_list = beast_description.find_all("li", class_="subsection desc")
 
-    returned_description = []
+    returned_list = []
 
     for description in description_list:
-        returned_description.append(description.text)
-
-    description = ' \n'.join(returned_description)
-
-    return description
+        returned_list.append(description.text)
+    return returned_list

@@ -56,3 +56,15 @@ def get_bestiary_keyboard(first_letter: str, start_from: int = 0, column_height:
 
 
     return builder.as_markup()
+
+
+
+def get_beast_description_keyboard(description_list: list):
+    builder = InlineKeyboardBuilder()
+
+    for i in range(len(description_list)):
+        builder.add(InlineKeyboardButton(text=f"📜{i+1}", callback_data=f"description_{i}"))
+
+    builder.row(InlineKeyboardButton(text="⬅️назад к характеристикам", callback_data="back_to_abilities"))
+
+    return builder.as_markup()
