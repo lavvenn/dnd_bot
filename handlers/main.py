@@ -13,10 +13,35 @@ from parsing.utils import get_beast_description, get_beast_abilities, get_beast_
 
 router = Router()
 
+
+WELLCOME_MESSAGE = """
+🌟 Добро пожаловать, отважные искатели приключений! 🌟
+Я ваш верный помощник в мире ДНД, готовый помочь вам на каждом шагу! 🎲✨
+Вот что я могу предложить:
+📚 Справочник (бестиарий): Узнайте о самых удивительных существах!
+🔮 Список заклинаний: Откройте для себя магию и её эффекты.
+🎲 Броски кубиков: Я совершу броски, чтобы вы могли сосредоточиться на стратегии!
+🛡️ Создание персонажа: Давайте вместе разработаем вашего уникального героя!
+Что бы вы хотели сделать в первую очередь? 🤔💭 Пусть ваше приключение начнется! 🏰🌌
+"""
+
+LETTER_CHOICE_MESSAGE = """
+🔍 Время искать! 🔍
+Похоже, вы хотите узнать о каком-то существе из нашего бестиария. Чтобы помочь вам быстрее, пожалуйста, выберите первую букву названия существа, которое вы ищете. Просто напишите букву, и я открою перед вами двери в мир удивительных созданий! 🦄🐉
+💡 Например: Если вы ищете "Дракона", просто нажмите "Д"!
+Жду вашего выбора! ✨
+"""
+
+BEAST_CHOICE_MESSAGE = """
+🌟 Отлично! 🌟
+Теперь, когда вы выбрали первую букву, давайте продолжим! Ниже представлены существа, начинающиеся на эту букву. Выберите одно из них, чтобы узнать больше о его характеристиках и способностях! 🦄🐉
+"""
+
+
 @router.message(CommandStart())
 async def start_cmd(message: Message,state: FSMContext):
     state.clear()
-    await message.answer("Welcome!", reply_markup=main_kb)
+    await message.answer(WELLCOME_MESSAGE, reply_markup=main_kb)
 
 
 @router.message(Command("help"))
@@ -26,13 +51,13 @@ async def help_cmd(message: Message):
 
 @router.message(F.text == "🔎 Поиск по букве")
 async def search_by_letter(message: Message, state: FSMContext):
-    await message.answer("Выберите букву", reply_markup=get_letters_keyboard())
+    await message.answer(LETTER_CHOICE_MESSAGE, reply_markup=get_letters_keyboard())
     await state.set_state(Search_beast.choise_letter)
 
 
 @router.callback_query(Search_beast.choise_letter)
 async def choice_letter(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text("выберите челика", reply_markup=get_bestiary_keyboard(callback.data))
+    await callback.message.edit_text(BEAST_CHOICE_MESSAGE, reply_markup=get_bestiary_keyboard(callback.data))
     await state.update_data(letter=callback.data)
     await state.set_state(Search_beast.choise_beast)
 
@@ -40,13 +65,13 @@ async def choice_letter(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("next"), Search_beast.choise_beast)
 async def next_page(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    await callback.message.edit_text("Welcome!", reply_markup=get_bestiary_keyboard(first_letter=data["letter"],start_from=int(callback.data[5:])))
+    await callback.message.edit_text(BEAST_CHOICE_MESSAGE, reply_markup=get_bestiary_keyboard(first_letter=data["letter"],start_from=int(callback.data[5:])))
 
 
 @router.callback_query(F.data.startswith("previous"), Search_beast.choise_beast)
 async def previous_page(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    await callback.message.edit_text("Welcome!", reply_markup=get_bestiary_keyboard(first_letter=data["letter"],start_from=int(callback.data[9:])))
+    await callback.message.edit_text(BEAST_CHOICE_MESSAGE, reply_markup=get_bestiary_keyboard(first_letter=data["letter"],start_from=int(callback.data[9:])))
 
 
 @router.callback_query(Search_beast.choise_beast)
@@ -85,4 +110,4 @@ async def choice_beast(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "back")
 async def back_to_menu(callback: CallbackQuery, state: FSMContext):
     await state.set_state(Search_beast.choise_letter)
-    await callback.message.edit_text("выберите букву", reply_markup=get_letters_keyboard())
+    await callback.message.edit_text(LETTER_CHOICE_MESSAGE, reply_markup=get_letters_keyboard())
