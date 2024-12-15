@@ -25,7 +25,7 @@ async def dice(message: Message, state: FSMContext):
 async def dice(callback: CallbackQuery, state: FSMContext):
     for i in range(3):
         await callback.message.edit_text(f"{3-i}...")
-        sleep(1)
+        sleep(0.5)
 
     dice = int(callback.data[1:])
     result = randint(1, dice)
