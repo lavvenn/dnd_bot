@@ -6,3 +6,7 @@ class Search_beast(StatesGroup):
     choise_letter = State()
     choise_beast = State()
     beast_description = State()
+
+
+class Dice(StatesGroup):
+    selest_dice = State()

@@ -47,16 +47,7 @@ def get_bestiary_keyboard(first_letter: str, start_from: int = 0, column_height:
         builder.row(InlineKeyboardButton(text='⬅️', callback_data=f'previous_{start_from - column_height}'),
                     InlineKeyboardButton(text='➡️', callback_data=f'next_{start_from + column_height}'))
     
-    print(start_from, column_height)
-
-    print(f"previous_{first_letter}_{start_from - column_height}")
-    print(f"next_{first_letter}_{start_from + column_height}")
-
-
-
-
     return builder.as_markup()
-
 
 
 def get_beast_description_keyboard(description_list: list):
